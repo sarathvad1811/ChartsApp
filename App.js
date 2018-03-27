@@ -1,6 +1,3 @@
-// @flow
-"use strict";
-
 import React, { Component } from "react";
 import {
   StyleSheet,
@@ -9,37 +6,30 @@ import {
   TouchableWithoutFeedback,
   View
 } from "react-native";
-
 import Pie from "./js/charts/Pie";
 import Theme from "./js/theme";
-import data from "./resources/data";
+import Slider from "react-native-slider";
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       activeIndex: 0,
-      spendingsPerYear: data.spendingsPerYear
+      collectionsTFI: [
+        { number: 40, name: "Baahubali" },
+        { number: 35, name: "Srimanthudu" },
+        { number: 25, name: "Rangasthalam" }
+      ],
+      value: 0
     };
-    this._onPieItemSelected = this._onPieItemSelected.bind(this);
-    this._shuffle = this._shuffle.bind(this);
   }
 
-  _onPieItemSelected(newIndex) {
+  _onPieItemSelected = newIndex => {
     this.setState({
       ...this.state,
-      activeIndex: newIndex,
-      spendingsPerYear: this._shuffle(data.spendingsPerYear)
+      activeIndex: newIndex
     });
-  }
-
-  _shuffle(a) {
-    for (let i = a.length; i; i--) {
-      let j = Math.floor(Math.random() * i);
-      [a[i - 1], a[j]] = [a[j], a[i - 1]];
-    }
-    return a;
-  }
+  };
 
   render() {
     const height = 200;
@@ -48,9 +38,6 @@ export default class App extends Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.chart_title}>
-            Distribution of spending this month
-          </Text>
           <Pie
             pieWidth={150}
             pieHeight={150}
@@ -58,13 +45,18 @@ export default class App extends Component {
             colors={Theme.colors}
             width={width}
             height={height}
-            data={data.spendingsLastMonth}
+            data={this.state.collectionsTFI}
           />
-          <Text style={styles.chart_title}>
-            Spending per year in{" "}
-            {data.spendingsLastMonth[this.state.activeIndex].name}
-          </Text>
+          <Text style={styles.chart_title}>TFI Collections</Text>
         </View>
+        <Slider
+          value={this.state.value}
+          onValueChange={value => this.setState({ value })}
+          minimumValue={0}
+          maximumValue={33}
+          step={5}
+        />
+        <Text>Value: {this.state.value}</Text>
       </ScrollView>
     );
   }
